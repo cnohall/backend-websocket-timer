@@ -19,7 +19,17 @@ io.on("connection", (socket) => {
   if (interval) {
     clearInterval(interval);
   }
-  interval = setInterval(() => getApiAndEmit(socket), 1);
+  interval = setInterval(() => getApiAndEmit(socket), 1000);
+
+  socket.on("start", () => {
+    const time = new Date(new Date()/1000 * 1000).toISOString().substr(11, 8);
+    socket.emit("start", time);
+  });
+
+  socket.on("stop", () => {
+    socket.emit("stop");
+  });
+  
   socket.on("disconnect", () => {
     console.log("Client disconnected");
     clearInterval(interval);
@@ -27,9 +37,11 @@ io.on("connection", (socket) => {
 });
 
 const getApiAndEmit = socket => {
-  const response = new Date();
+  const response = new Date(new Date()/1000 * 1000).toISOString().substr(11, 8);
   // Emitting a new message. Will be consumed by the client
   socket.emit("FromAPI", response);
 };
+
+
 
 server.listen(port, () => console.log(`Listening on port ${port}`));
