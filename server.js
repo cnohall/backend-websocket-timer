@@ -23,11 +23,11 @@ io.on("connection", (socket) => {
 
   socket.on("start", () => {
     const time = new Date(new Date()/1000 * 1000).toISOString().substr(11, 8);
-    socket.emit("start", time);
+    io.sockets.emit("start", time);
   });
 
   socket.on("stop", () => {
-    socket.emit("stop");
+    io.sockets.emit("stop");
   });
   
   socket.on("disconnect", () => {
