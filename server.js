@@ -22,7 +22,7 @@ io.on("connection", (socket) => {
   interval = setInterval(() => getApiAndEmit(socket), 1000);
 
   socket.on("start", () => {
-    const time = new Date(new Date()/1000 * 1000).toISOString().substr(11, 8);
+    const time = new Date();
     io.sockets.emit("start", time);
   });
 
@@ -37,7 +37,7 @@ io.on("connection", (socket) => {
 });
 
 const getApiAndEmit = socket => {
-  const response = new Date(new Date()/1000 * 1000).toISOString().substr(11, 8);
+  const response = new Date();
   // Emitting a new message. Will be consumed by the client
   socket.emit("FromAPI", response);
 };
