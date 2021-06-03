@@ -12,22 +12,27 @@ const server = http.createServer(app);
 
 const io = socketIo(server);
 
-let interval;
+let part = 0;
 
 io.on("connection", (socket) => {
-  socket.emit("FromAPI", new Date());
+  socket.emit("connected", {time: new Date(), part});
 
   socket.on("start", () => {
     const time = new Date();
     io.sockets.emit("start", time);
   });
 
+  socket.on("nextPart", () => {
+    part++;
+    io.sockets.emit("nextPart", part);
+  });
+
   socket.on("stop", () => {
+    part = 0;
     io.sockets.emit("stop");
   });
   
   socket.on("disconnect", () => {
-    clearInterval(interval);
   });
 });
 
