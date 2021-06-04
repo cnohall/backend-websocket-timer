@@ -29,7 +29,7 @@ io.on("connection", (socket) => {
   });
 
   socket.on("stop", () => {
-    part = 0;
+    part = [];
     startingTime = 0;
     io.sockets.emit("stop");
   });
