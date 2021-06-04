@@ -12,7 +12,7 @@ const server = http.createServer(app);
 
 const io = socketIo(server);
 
-let part = 0;
+let part = [];
 
 io.on("connection", (socket) => {
   socket.emit("connected", {time: new Date(), part});
@@ -23,7 +23,7 @@ io.on("connection", (socket) => {
   });
 
   socket.on("nextPart", () => {
-    part++;
+    part.push(new Date());
     io.sockets.emit("nextPart", part);
   });
 
