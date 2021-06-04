@@ -13,13 +13,14 @@ const server = http.createServer(app);
 const io = socketIo(server);
 
 let part = [];
+let startingTime;
 
 io.on("connection", (socket) => {
-  socket.emit("connected", {time: new Date(), part});
+  socket.emit("connected", {startingTime, time: new Date(), part});
 
   socket.on("start", () => {
-    const time = new Date();
-    io.sockets.emit("start", time);
+    startingTime = new Date();
+    io.sockets.emit("start", startingTime);
   });
 
   socket.on("nextPart", () => {
@@ -29,6 +30,7 @@ io.on("connection", (socket) => {
 
   socket.on("stop", () => {
     part = 0;
+    startingTime = 0;
     io.sockets.emit("stop");
   });
   
