@@ -20,7 +20,9 @@ io.on("connection", (socket) => {
 
   socket.on("start", () => {
     startingTime = new Date();
-    io.sockets.emit("start", startingTime);
+    let ms = 1000 * 60 * minutes; // convert minutes to ms
+    let roundedDate = new Date(Math.round(startingTime.getTime() / ms) * ms);
+    io.sockets.emit("start", roundedDate);
   });
 
   socket.on("nextPart", () => {
