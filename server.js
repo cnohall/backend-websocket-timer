@@ -9,14 +9,22 @@ const app = express();
 app.use(index);
 
 const server = http.createServer(app);
-
 const io = socketIo(server);
 
 let part = [];
 let startingTime;
+let connections = 0;
 
 io.on("connection", (socket) => {
-  socket.emit("connected", {startingTime, time: new Date(), part});
+  socket.emit("connected", {startingTime, time: new Date(), part, connections});
+  if(connections > 0){
+    startingTime = new Date();
+    let ms = 1000 * 60; // convert minutes to ms
+    let roundedDate = new Date(Math.round(startingTime.getTime() / ms) * ms);
+    io.sockets.emit("start", roundedDate);
+  }
+  connections++;
+
 
   socket.on("start", () => {
     startingTime = new Date();
@@ -37,6 +45,10 @@ io.on("connection", (socket) => {
   });
   
   socket.on("disconnect", () => {
+    connections--;
+    if (connections === 0){
+      part = [];
+    }
   });
 });
 
