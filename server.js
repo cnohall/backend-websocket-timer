@@ -14,20 +14,23 @@ const io = socketIo(server);
 let part = [];
 let startingTime;
 let connections = 0;
+let started = false;
 
 io.on("connection", (socket) => {
-  socket.emit("connected", {startingTime, time: new Date(), part, connections});
-  if(connections > 0){
+  io.sockets.emit("connections", connections);
+  connections++;
+  
+  socket.emit("connected", {startingTime, time: new Date(), part});
+  if(started){
     startingTime = new Date();
     let ms = 1000 * 60; // convert minutes to ms
     let roundedDate = new Date(Math.round(startingTime.getTime() / ms) * ms);
-    io.sockets.emit("start", roundedDate);
+    socket.emit("start", roundedDate);
   }
-  connections++;
-
 
   socket.on("start", () => {
     startingTime = new Date();
+    started = true;
     let ms = 1000 * 60; // convert minutes to ms
     let roundedDate = new Date(Math.round(startingTime.getTime() / ms) * ms);
     io.sockets.emit("start", roundedDate);
@@ -41,11 +44,13 @@ io.on("connection", (socket) => {
   socket.on("stop", () => {
     part = [];
     startingTime = 0;
+    started = false;
     io.sockets.emit("stop");
   });
   
   socket.on("disconnect", () => {
     connections--;
+    io.sockets.emit("connections", connections);
     if (connections === 0){
       part = [];
     }
